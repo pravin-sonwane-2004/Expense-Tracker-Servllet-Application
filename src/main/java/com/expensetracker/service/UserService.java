@@ -1,37 +1,49 @@
 package com.expensetracker.service;
 
-import com.expensetracker.dao.UserDAO;
+import com.expensetracker.dto.UserDTO;
 import com.expensetracker.model.User;
+import com.expensetracker.repository.UserRepository;
+import com.expensetracker.repository.impl.UserRepositoryImpl;
 
 public class UserService {
-    private UserDAO userDAO;
+    private UserRepository userRepository;
 
     public UserService() {
-        this.userDAO = new UserDAO();
+        this.userRepository = new UserRepositoryImpl();
+    }
+
+    // Dependency injection constructor for testability
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     public void registerUser(User user) {
-        userDAO.registerUser(user);
+        userRepository.save(user);
     }
 
     public User loginUser(String email, String password) {
-        return userDAO.loginUser(email, password);
+        return userRepository.findByEmailAndPassword(email, password);
     }
 
     public User getUserById(int userId) {
-        return userDAO.getUserById(userId);
+        return userRepository.findById(userId);
+    }
+
+    public UserDTO getUserDTOById(int userId) {
+        User user = userRepository.findById(userId);
+        return user != null ? convertToDTO(user) : null;
     }
 
     public boolean isEmailExists(String email) {
-        return userDAO.isEmailExists(email);
+        return userRepository.isEmailExists(email);
     }
 
     public void updateUser(User user) {
-        userDAO.updateUser(user);
+        userRepository.update(user);
     }
 
     public boolean changePassword(int userId, String oldPassword, String newPassword) {
-        return userDAO.changePassword(userId, oldPassword, newPassword);
+        return userRepository.changePassword(userId, oldPassword, newPassword);
     }
 
     public String validateRegistration(String name, String email, String password, String confirmPassword) {
@@ -47,7 +59,7 @@ public class UserService {
         if (!password.equals(confirmPassword)) {
             return "Passwords do not match";
         }
-        if (userDAO.isEmailExists(email)) {
+        if (userRepository.isEmailExists(email)) {
             return "Email already registered";
         }
         return null;
@@ -81,5 +93,14 @@ public class UserService {
             return "Passwords do not match";
         }
         return null;
+    }
+
+    private UserDTO convertToDTO(User user) {
+        return new UserDTO(
+            user.getId(),
+            user.getName(),
+            user.getEmail(),
+            user.getCreatedAt()
+        );
     }
 }

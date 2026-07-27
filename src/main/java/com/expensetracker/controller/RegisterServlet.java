@@ -56,8 +56,7 @@ public class RegisterServlet extends HttpServlet {
         user.setPassword(password);
         userService.registerUser(user);
 
-        result.put("success", true);
-        result.put("message", "Registration successful! Please login.");
-        response.getWriter().write(gson.toJson(result));
+        // Redirect to login page on successful registration
+        response.sendRedirect(request.getContextPath() + "/login");
     }
 }

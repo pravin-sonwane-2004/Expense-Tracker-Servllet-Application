@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard - Expense Tracker</title>
-<link rel="stylesheet" href="css/style.css">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Dashboard - Expense Tracker</title>
+	<link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 	<div class="nav">
 		<a class="brand" href="dashboard.html">&#x1F4B0; Expense Tracker</a>
 		<div>
-			<a href="dashboard.html" class="active">Dashboard</a> <a
-				href="expenses.html">Expenses</a> <a href="profile.html">Profile</a>
+			<a href="dashboard.html" class="active">Dashboard</a> <a href="expenses.html">Expenses</a> <a
+				href="profile.html">Profile</a>
 		</div>
 		<div class="right">
 			<span id="userName">&#x1F464; User</span><a href="#" id="logoutBtn">Logout</a>
 		</div>
 	</div>
 	<div class="container">
-		<div
-			style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+		<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
 			<h2>Dashboard</h2>
-			<a href="expenses.html?action=add" class="btn btn-primary"
-				id="addExpenseBtn">+ Add Expense</a>
+			<a href="expenses.html?action=add" class="btn btn-primary" id="addExpenseBtn">+ Add Expense</a>
 		</div>
 		<div class="row" id="statsRow">
 			<div class="card stat" style="border-left-color: #4361ee;">
@@ -48,8 +48,8 @@
 		</div>
 		<div class="card">
 			<div class="card-header">
-				<span>&#x1F552; Recent Expenses</span><a href="expenses.html"
-					class="btn btn-outline" style="font-size: 12px; padding: 4px 12px;">View
+				<span>&#x1F552; Recent Expenses</span><a href="expenses.html" class="btn btn-outline"
+					style="font-size: 12px; padding: 4px 12px;">View
 					All &rarr;</a>
 			</div>
 			<div class="card-body" style="padding: 0;">
@@ -60,60 +60,61 @@
 	<div class="footer">&copy; 2026 Expense Tracker</div>
 
 	<script>
-document.addEventListener('DOMContentLoaded', function() {
-    function formatCurrency(amount) {
-        return '&#x20B9; ' + parseFloat(amount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
+		document.addEventListener('DOMContentLoaded', function () {
+			function formatCurrency(amount) {
+				return '&#x20B9; ' + parseFloat(amount).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+			}
 
-    function loadDashboard() {
-        fetch('api/dashboard')
-            .then(function(r) { return r.json(); })
-            .then(function(data) {
-                if (!data.success) {
-                    window.location.href = 'login.html';
-                    return;
-                }
+			function loadDashboard() {
+				fetch('api/dashboard')
+					.then(function (r) {return r.json();})
+					.then(function (data) {
+						if (!data.success) {
+							window.location.href = 'login.html';
+							return;
+						}
 
-                document.getElementById('userName').textContent = '&#x1F464; ' + data.user.name;
-                document.getElementById('totalExpense').innerHTML = formatCurrency(data.totalExpense);
-                document.getElementById('highestExpense').innerHTML = formatCurrency(data.highestExpense);
-                document.getElementById('lowestExpense').innerHTML = formatCurrency(data.lowestExpense);
-                document.getElementById('recentCount').textContent = data.recentExpenses ? data.recentExpenses.length : 0;
+						document.getElementById('userName').textContent = '&#x1F464; ' + data.user.name;
+						document.getElementById('totalExpense').innerHTML = formatCurrency(data.totalExpense);
+						document.getElementById('highestExpense').innerHTML = formatCurrency(data.highestExpense);
+						document.getElementById('lowestExpense').innerHTML = formatCurrency(data.lowestExpense);
+						document.getElementById('recentCount').textContent = data.recentExpenses ? data.recentExpenses.length : 0;
 
-                var container = document.getElementById('recentTableContainer');
-                var expenses = data.recentExpenses;
+						var container = document.getElementById('recentTableContainer');
+						var expenses = data.recentExpenses;
 
-                if (!expenses || expenses.length === 0) {
-                    container.innerHTML = '<div class="empty"><div class="ico">&#x1F4E5;</div><p>No expenses yet.</p><a href="expenses.html?action=add" class="btn btn-primary" style="margin-top:12px;">+ Add Your First Expense</a></div>';
-                } else {
-                    var html = '<table><thead><tr><th>Title</th><th>Amount</th><th>Category</th><th>Date</th></tr></thead><tbody>';
-                    for (var i = 0; i < expenses.length; i++) {
-                        var e = expenses[i];
-                        html += '<tr><td style="font-weight:600;">' + e.title + '</td><td style="color:#e71d36;font-weight:700;">' + formatCurrency(e.amount) + '</td><td><span class="badge">' + e.category + '</span></td><td>' + e.expenseDate + '</td></tr>';
-                    }
-                    html += '</tbody></table>';
-                    container.innerHTML = html;
-                }
-            })
-            .catch(function() {
-                window.location.href = 'login.html';
-            });
-    }
+						if (!expenses || expenses.length === 0) {
+							container.innerHTML = '<div class="empty"><div class="ico">&#x1F4E5;</div><p>No expenses yet.</p><a href="expenses.html?action=add" class="btn btn-primary" style="margin-top:12px;">+ Add Your First Expense</a></div>';
+						} else {
+							var html = '<table><thead><tr><th>Title</th><th>Amount</th><th>Category</th><th>Date</th></tr></thead><tbody>';
+							for (var i = 0; i < expenses.length; i++) {
+								var e = expenses[i];
+								html += '<tr><td style="font-weight:600;">' + e.title + '</td><td style="color:#e71d36;font-weight:700;">' + formatCurrency(e.amount) + '</td><td><span class="badge">' + e.category + '</span></td><td>' + e.expenseDate + '</td></tr>';
+							}
+							html += '</tbody></table>';
+							container.innerHTML = html;
+						}
+					})
+					.catch(function () {
+						window.location.href = 'login.html';
+					});
+			}
 
-    loadDashboard();
+			loadDashboard();
 
-    document.getElementById('logoutBtn').addEventListener('click', function(e) {
-        e.preventDefault();
-        fetch('api/logout', { method: 'POST' })
-            .then(function(r) { return r.json(); })
-            .then(function() {
-                window.location.href = 'login.html';
-            })
-            .catch(function() {
-                window.location.href = 'login.html';
-            });
-    });
-});
-</script>
+			document.getElementById('logoutBtn').addEventListener('click', function (e) {
+				e.preventDefault();
+				fetch('api/logout', {method: 'POST'})
+					.then(function (r) {return r.json();})
+					.then(function () {
+						window.location.href = 'login.html';
+					})
+					.catch(function () {
+						window.location.href = 'login.html';
+					});
+			});
+		});
+	</script>
 </body>
+
 </html>

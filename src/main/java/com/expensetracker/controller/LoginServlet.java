@@ -78,8 +78,7 @@ public class LoginServlet extends HttpServlet {
             response.addCookie(cookie);
         }
 
-        result.put("success", true);
-        result.put("user", user);
-        response.getWriter().write(gson.toJson(result));
+        // Redirect to dashboard on successful login
+        response.sendRedirect(request.getContextPath() + "/dashboard");
     }
 }

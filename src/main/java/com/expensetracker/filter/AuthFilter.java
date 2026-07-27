@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-@WebFilter(urlPatterns = {"/api/dashboard", "/api/expenses", "/api/profile"})
+@WebFilter(urlPatterns = {"/dashboard", "/expenses", "/profile", "/api/dashboard", "/api/expenses", "/api/profile"})
 public class AuthFilter extends HttpFilter implements Filter {
     private static final long serialVersionUID = 1L;
 
@@ -31,6 +31,13 @@ public class AuthFilter extends HttpFilter implements Filter {
         HttpSession session = httpRequest.getSession(false);
 
         if (session == null || session.getAttribute("user") == null) {
+            String path = httpRequest.getRequestURI().substring(httpRequest.getContextPath().length());
+            // For page requests, redirect to login
+            if (path.startsWith("/dashboard") || path.startsWith("/expenses") || path.startsWith("/profile")) {
+                httpResponse.sendRedirect(httpRequest.getContextPath() + "/login");
+                return;
+            }
+            // For API requests, return JSON
             httpResponse.setStatus(401);
             httpResponse.setContentType("application/json");
             httpResponse.getWriter().write("{\"success\":false,\"error\":\"Not authenticated\"}");

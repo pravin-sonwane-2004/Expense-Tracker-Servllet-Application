@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Expenses - Expense Tracker</title>
-<link rel="stylesheet" href="css/style.css">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Expenses - Expense Tracker</title>
+	<link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 	<div class="nav">
 		<a class="brand" href="dashboard.html">&#x1F4B0; Expense Tracker</a>
 		<div>
-			<a href="dashboard.html">Dashboard</a> <a href="expenses.html"
-				class="active">Expenses</a> <a href="profile.html">Profile</a>
+			<a href="dashboard.html">Dashboard</a> <a href="expenses.html" class="active">Expenses</a> <a
+				href="profile.html">Profile</a>
 		</div>
 		<div class="right">
 			<span id="userName">&#x1F464; User</span><a href="#" id="logoutBtn">Logout</a>
@@ -34,8 +36,8 @@
 			<div class="card">
 				<div class="card-body">
 					<form id="searchForm" style="display: flex; gap: 8px;">
-						<input type="text" id="searchKeyword" name="keyword"
-							placeholder="Search..." style="flex: 1; margin: 0;">
+						<input type="text" id="searchKeyword" name="keyword" placeholder="Search..."
+							style="flex: 1; margin: 0;">
 						<button type="submit" class="btn btn-primary">Search</button>
 						<a href="expenses.html" class="btn btn-outline">Clear</a>
 					</form>
@@ -43,8 +45,8 @@
 			</div>
 			<div class="card">
 				<div class="card-header">
-					<span>All Expenses</span><a href="expenses.html?action=add"
-						class="btn btn-primary btn-sm">+ Add New</a>
+					<span>All Expenses</span><a href="expenses.html?action=add" class="btn btn-primary btn-sm">+ Add
+						New</a>
 				</div>
 				<div style="overflow-x: auto;" id="expensesTableContainer"></div>
 			</div>
@@ -60,16 +62,14 @@
 						<input type="hidden" name="id" id="expenseId" value="">
 						<div class="row">
 							<div class="col">
-								<label>Title *</label><input type="text" name="title"
-									id="expenseTitle" required>
+								<label>Title *</label><input type="text" name="title" id="expenseTitle" required>
 							</div>
 							<div class="col">
-								<label>Amount *</label><input type="number" name="amount"
-									id="expenseAmount" step="0.01" min="0.01" required>
+								<label>Amount *</label><input type="number" name="amount" id="expenseAmount" step="0.01"
+									min="0.01" required>
 							</div>
 							<div class="col">
-								<label>Category *</label><select name="category"
-									id="expenseCategory" required>
+								<label>Category *</label><select name="category" id="expenseCategory" required>
 									<option value="">Select</option>
 									<option value="Food">Food</option>
 									<option value="Fuel">Fuel</option>
@@ -82,8 +82,7 @@
 								</select>
 							</div>
 							<div class="col">
-								<label>Date *</label><input type="date" name="expenseDate"
-									id="expenseDate" required>
+								<label>Date *</label><input type="date" name="expenseDate" id="expenseDate" required>
 							</div>
 							<div class="col" style="flex-basis: 100%;">
 								<label>Description</label>
@@ -105,11 +104,9 @@
 			<div class="card">
 				<div class="card-header">Expense Reports</div>
 				<div class="card-body">
-					<form id="reportForm"
-						style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px;">
+					<form id="reportForm" style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px;">
 						<div style="flex: 1; min-width: 150px;">
-							<label>Type</label><select name="reportType" id="rt"
-								onchange="toggleReport()">
+							<label>Type</label><select name="reportType" id="rt" onchange="toggleReport()">
 								<option value="all">All</option>
 								<option value="monthly">Monthly</option>
 								<option value="category">Category</option>
@@ -163,218 +160,219 @@
 	<div class="footer">&copy; 2026 Expense Tracker</div>
 
 	<script>
-var currentTab = 'list';
+		var currentTab = 'list';
 
-document.addEventListener('DOMContentLoaded', function() {
-    var params = new URLSearchParams(window.location.search);
-    if (params.get('action') === 'add') {
-        showTab('add');
-    } else if (params.get('action') === 'edit') {
-        showTab('edit');
-        loadExpenseForEdit(params.get('id'));
-    }
+		document.addEventListener('DOMContentLoaded', function () {
+			var params = new URLSearchParams(window.location.search);
+			if (params.get('action') === 'add') {
+				showTab('add');
+			} else if (params.get('action') === 'edit') {
+				showTab('edit');
+				loadExpenseForEdit(params.get('id'));
+			}
 
-    loadExpenses();
+			loadExpenses();
 
-    document.getElementById('searchForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        var keyword = document.getElementById('searchKeyword').value;
-        searchExpenses(keyword);
-    });
+			document.getElementById('searchForm').addEventListener('submit', function (e) {
+				e.preventDefault();
+				var keyword = document.getElementById('searchKeyword').value;
+				searchExpenses(keyword);
+			});
 
-    document.getElementById('expenseForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        submitExpenseForm();
-    });
+			document.getElementById('expenseForm').addEventListener('submit', function (e) {
+				e.preventDefault();
+				submitExpenseForm();
+			});
 
-    document.getElementById('reportForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        generateReport();
-    });
+			document.getElementById('reportForm').addEventListener('submit', function (e) {
+				e.preventDefault();
+				generateReport();
+			});
 
-    document.getElementById('logoutBtn').addEventListener('click', function(e) {
-        e.preventDefault();
-        fetch('api/logout', { method: 'POST' })
-            .then(function(r) { return r.json(); })
-            .then(function() { window.location.href = 'login.html'; })
-            .catch(function() { window.location.href = 'login.html'; });
-    });
-});
+			document.getElementById('logoutBtn').addEventListener('click', function (e) {
+				e.preventDefault();
+				fetch('api/logout', {method: 'POST'})
+					.then(function (r) {return r.json();})
+					.then(function () {window.location.href = 'login.html';})
+					.catch(function () {window.location.href = 'login.html';});
+			});
+		});
 
-function showTab(tab) {
-    currentTab = tab;
-    document.querySelectorAll('.tab-pane').forEach(function(el) { el.classList.remove('active'); });
-    document.querySelectorAll('.tabs button').forEach(function(el) { el.classList.remove('active'); });
+		function showTab(tab) {
+			currentTab = tab;
+			document.querySelectorAll('.tab-pane').forEach(function (el) {el.classList.remove('active');});
+			document.querySelectorAll('.tabs button').forEach(function (el) {el.classList.remove('active');});
 
-    if (tab === 'list') {
-        document.getElementById('tab-list').classList.add('active');
-        document.getElementById('tabListBtn').classList.add('active');
-        loadExpenses();
-    } else if (tab === 'add' || tab === 'edit') {
-        document.getElementById('tab-add').classList.add('active');
-        document.getElementById('tabAddBtn').classList.add('active');
-    } else if (tab === 'report') {
-        document.getElementById('tab-report').classList.add('active');
-        document.getElementById('tabReportBtn').classList.add('active');
-    }
-}
+			if (tab === 'list') {
+				document.getElementById('tab-list').classList.add('active');
+				document.getElementById('tabListBtn').classList.add('active');
+				loadExpenses();
+			} else if (tab === 'add' || tab === 'edit') {
+				document.getElementById('tab-add').classList.add('active');
+				document.getElementById('tabAddBtn').classList.add('active');
+			} else if (tab === 'report') {
+				document.getElementById('tab-report').classList.add('active');
+				document.getElementById('tabReportBtn').classList.add('active');
+			}
+		}
 
-function loadExpenses() {
-    fetch('api/expenses')
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-            if (!data.success) { window.location.href = 'login.html'; return; }
-            renderExpensesTable(data.expenses);
-        })
-        .catch(function() { window.location.href = 'login.html'; });
-}
+		function loadExpenses() {
+			fetch('api/expenses')
+				.then(function (r) {return r.json();})
+				.then(function (data) {
+					if (!data.success) {window.location.href = 'login.html'; return;}
+					renderExpensesTable(data.expenses);
+				})
+				.catch(function () {window.location.href = 'login.html';});
+		}
 
-function searchExpenses(keyword) {
-    var url = 'api/expenses?action=search';
-    if (keyword) url += '&keyword=' + encodeURIComponent(keyword);
-    fetch(url)
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-            if (!data.success) { window.location.href = 'login.html'; return; }
-            renderExpensesTable(data.expenses);
-        })
-        .catch(function() { window.location.href = 'login.html'; });
-}
+		function searchExpenses(keyword) {
+			var url = 'api/expenses?action=search';
+			if (keyword) url += '&keyword=' + encodeURIComponent(keyword);
+			fetch(url)
+				.then(function (r) {return r.json();})
+				.then(function (data) {
+					if (!data.success) {window.location.href = 'login.html'; return;}
+					renderExpensesTable(data.expenses);
+				})
+				.catch(function () {window.location.href = 'login.html';});
+		}
 
-function renderExpensesTable(expenses) {
-    var container = document.getElementById('expensesTableContainer');
-    if (!expenses || expenses.length === 0) {
-        container.innerHTML = '<div class="empty"><div class="ico">&#x1F4E5;</div><p>No expenses found.</p></div>';
-        return;
-    }
-    var html = '<table><thead><tr><th>#</th><th>Title</th><th>Amount</th><th>Category</th><th>Date</th><th>Description</th><th>Actions</th></tr></thead><tbody>';
-    for (var i = 0; i < expenses.length; i++) {
-        var e = expenses[i];
-        html += '<tr><td>' + (i + 1) + '</td><td style="font-weight:600;">' + e.title + '</td><td style="color:#e71d36;font-weight:700;">&#x20B9; ' + parseFloat(e.amount).toLocaleString('en-IN', {minimumFractionDigits:2}) + '</td><td><span class="badge">' + e.category + '</span></td><td>' + e.expenseDate + '</td><td>' + (e.description || '-') + '</td>';
-        html += '<td style="white-space:nowrap;"><a href="expenses.html?action=edit&id=' + e.id + '" class="btn btn-outline btn-sm">&#x270F;</a> <button class="btn btn-danger btn-sm" onclick="deleteExpense(' + e.id + ')">&#x1F5D1;</button></td></tr>';
-    }
-    html += '</tbody></table>';
-    container.innerHTML = html;
-}
+		function renderExpensesTable(expenses) {
+			var container = document.getElementById('expensesTableContainer');
+			if (!expenses || expenses.length === 0) {
+				container.innerHTML = '<div class="empty"><div class="ico">&#x1F4E5;</div><p>No expenses found.</p></div>';
+				return;
+			}
+			var html = '<table><thead><tr><th>#</th><th>Title</th><th>Amount</th><th>Category</th><th>Date</th><th>Description</th><th>Actions</th></tr></thead><tbody>';
+			for (var i = 0; i < expenses.length; i++) {
+				var e = expenses[i];
+				html += '<tr><td>' + (i + 1) + '</td><td style="font-weight:600;">' + e.title + '</td><td style="color:#e71d36;font-weight:700;">&#x20B9; ' + parseFloat(e.amount).toLocaleString('en-IN', {minimumFractionDigits: 2}) + '</td><td><span class="badge">' + e.category + '</span></td><td>' + e.expenseDate + '</td><td>' + (e.description || '-') + '</td>';
+				html += '<td style="white-space:nowrap;"><a href="expenses.html?action=edit&id=' + e.id + '" class="btn btn-outline btn-sm">&#x270F;</a> <button class="btn btn-danger btn-sm" onclick="deleteExpense(' + e.id + ')">&#x1F5D1;</button></td></tr>';
+			}
+			html += '</tbody></table>';
+			container.innerHTML = html;
+		}
 
-function loadExpenseForEdit(id) {
-    fetch('api/expenses?action=edit&id=' + id)
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-            if (data.success && data.expense) {
-                var e = data.expense;
-                document.getElementById('formHeader').textContent = 'Edit Expense';
-                document.getElementById('formAction').value = 'edit';
-                document.getElementById('expenseId').value = e.id;
-                document.getElementById('expenseTitle').value = e.title;
-                document.getElementById('expenseAmount').value = e.amount;
-                document.getElementById('expenseCategory').value = e.category;
-                document.getElementById('expenseDate').value = e.expenseDate;
-                document.getElementById('expenseDescription').value = e.description || '';
-                document.getElementById('formSubmitBtn').textContent = 'Update Expense';
-                showTab('edit');
-            }
-        });
-}
+		function loadExpenseForEdit(id) {
+			fetch('api/expenses?action=edit&id=' + id)
+				.then(function (r) {return r.json();})
+				.then(function (data) {
+					if (data.success && data.expense) {
+						var e = data.expense;
+						document.getElementById('formHeader').textContent = 'Edit Expense';
+						document.getElementById('formAction').value = 'edit';
+						document.getElementById('expenseId').value = e.id;
+						document.getElementById('expenseTitle').value = e.title;
+						document.getElementById('expenseAmount').value = e.amount;
+						document.getElementById('expenseCategory').value = e.category;
+						document.getElementById('expenseDate').value = e.expenseDate;
+						document.getElementById('expenseDescription').value = e.description || '';
+						document.getElementById('formSubmitBtn').textContent = 'Update Expense';
+						showTab('edit');
+					}
+				});
+		}
 
-function submitExpenseForm() {
-    var form = document.getElementById('expenseForm');
-    var formData = new FormData(form);
+		function submitExpenseForm() {
+			var form = document.getElementById('expenseForm');
+			var formData = new FormData(form);
 
-    fetch('api/expenses', {
-        method: 'POST',
-        body: new URLSearchParams(formData)
-    })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-        if (data.success) {
-            showAlert(data.message, 'success');
-            resetForm();
-            showTab('list');
-            loadExpenses();
-        } else {
-            showAlert(data.error, 'danger');
-        }
-    })
-    .catch(function() { showAlert('Connection error', 'danger'); });
-}
+			fetch('api/expenses', {
+				method: 'POST',
+				body: new URLSearchParams(formData)
+			})
+				.then(function (r) {return r.json();})
+				.then(function (data) {
+					if (data.success) {
+						showAlert(data.message, 'success');
+						resetForm();
+						showTab('list');
+						loadExpenses();
+					} else {
+						showAlert(data.error, 'danger');
+					}
+				})
+				.catch(function () {showAlert('Connection error', 'danger');});
+		}
 
-function deleteExpense(id) {
-    if (!confirm('Delete this expense?')) return;
-    var formData = new FormData();
-    formData.append('action', 'delete');
-    formData.append('id', id);
+		function deleteExpense(id) {
+			if (!confirm('Delete this expense?')) return;
+			var formData = new FormData();
+			formData.append('action', 'delete');
+			formData.append('id', id);
 
-    fetch('api/expenses', {
-        method: 'POST',
-        body: new URLSearchParams(formData)
-    })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-        if (data.success) {
-            showAlert(data.message, 'success');
-            loadExpenses();
-        } else {
-            showAlert(data.error, 'danger');
-        }
-    });
-}
+			fetch('api/expenses', {
+				method: 'POST',
+				body: new URLSearchParams(formData)
+			})
+				.then(function (r) {return r.json();})
+				.then(function (data) {
+					if (data.success) {
+						showAlert(data.message, 'success');
+						loadExpenses();
+					} else {
+						showAlert(data.error, 'danger');
+					}
+				});
+		}
 
-function resetForm() {
-    document.getElementById('formHeader').textContent = 'Add New Expense';
-    document.getElementById('formAction').value = 'add';
-    document.getElementById('expenseId').value = '';
-    document.getElementById('expenseTitle').value = '';
-    document.getElementById('expenseAmount').value = '';
-    document.getElementById('expenseCategory').value = '';
-    document.getElementById('expenseDate').value = '';
-    document.getElementById('expenseDescription').value = '';
-    document.getElementById('formSubmitBtn').textContent = 'Add Expense';
-}
+		function resetForm() {
+			document.getElementById('formHeader').textContent = 'Add New Expense';
+			document.getElementById('formAction').value = 'add';
+			document.getElementById('expenseId').value = '';
+			document.getElementById('expenseTitle').value = '';
+			document.getElementById('expenseAmount').value = '';
+			document.getElementById('expenseCategory').value = '';
+			document.getElementById('expenseDate').value = '';
+			document.getElementById('expenseDescription').value = '';
+			document.getElementById('formSubmitBtn').textContent = 'Add Expense';
+		}
 
-function generateReport() {
-    var form = document.getElementById('reportForm');
-    var formData = new FormData(form);
-    var params = new URLSearchParams(formData);
-    params.append('action', 'report');
+		function generateReport() {
+			var form = document.getElementById('reportForm');
+			var formData = new FormData(form);
+			var params = new URLSearchParams(formData);
+			params.append('action', 'report');
 
-    fetch('api/expenses?' + params.toString())
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-            if (!data.success) { window.location.href = 'login.html'; return; }
-            var container = document.getElementById('reportResults');
-            var expenses = data.reportExpenses;
-            if (!expenses || expenses.length === 0) {
-                container.innerHTML = '<div class="empty"><div class="ico">&#x1F4CA;</div><p>No data for this report.</p></div>';
-                return;
-            }
-            var html = '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;">';
-            html += '<div class="card stat" style="border-left-color:#4361ee;"><div class="lbl">Total</div><div class="val">&#x20B9; ' + parseFloat(data.reportTotal).toLocaleString('en-IN', {minimumFractionDigits:2}) + '</div></div>';
-            html += '<div class="card stat" style="border-left-color:#2ec4b6;"><div class="lbl">Highest</div><div class="val">&#x20B9; ' + parseFloat(data.reportHighest).toLocaleString('en-IN', {minimumFractionDigits:2}) + '</div></div>';
-            html += '<div class="card stat" style="border-left-color:#ff9f1c;"><div class="lbl">Lowest</div><div class="val">&#x20B9; ' + parseFloat(data.reportLowest).toLocaleString('en-IN', {minimumFractionDigits:2}) + '</div></div>';
-            html += '</div>';
-            html += '<div style="overflow-x:auto;"><table><thead><tr><th>#</th><th>Title</th><th>Amount</th><th>Category</th><th>Date</th></tr></thead><tbody>';
-            for (var i = 0; i < expenses.length; i++) {
-                var e = expenses[i];
-                html += '<tr><td>' + (i + 1) + '</td><td style="font-weight:600;">' + e.title + '</td><td style="color:#e71d36;font-weight:700;">&#x20B9; ' + parseFloat(e.amount).toLocaleString('en-IN', {minimumFractionDigits:2}) + '</td><td><span class="badge">' + e.category + '</span></td><td>' + e.expenseDate + '</td></tr>';
-            }
-            html += '</tbody></table></div>';
-            container.innerHTML = html;
-        });
-}
+			fetch('api/expenses?' + params.toString())
+				.then(function (r) {return r.json();})
+				.then(function (data) {
+					if (!data.success) {window.location.href = 'login.html'; return;}
+					var container = document.getElementById('reportResults');
+					var expenses = data.reportExpenses;
+					if (!expenses || expenses.length === 0) {
+						container.innerHTML = '<div class="empty"><div class="ico">&#x1F4CA;</div><p>No data for this report.</p></div>';
+						return;
+					}
+					var html = '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;">';
+					html += '<div class="card stat" style="border-left-color:#4361ee;"><div class="lbl">Total</div><div class="val">&#x20B9; ' + parseFloat(data.reportTotal).toLocaleString('en-IN', {minimumFractionDigits: 2}) + '</div></div>';
+					html += '<div class="card stat" style="border-left-color:#2ec4b6;"><div class="lbl">Highest</div><div class="val">&#x20B9; ' + parseFloat(data.reportHighest).toLocaleString('en-IN', {minimumFractionDigits: 2}) + '</div></div>';
+					html += '<div class="card stat" style="border-left-color:#ff9f1c;"><div class="lbl">Lowest</div><div class="val">&#x20B9; ' + parseFloat(data.reportLowest).toLocaleString('en-IN', {minimumFractionDigits: 2}) + '</div></div>';
+					html += '</div>';
+					html += '<div style="overflow-x:auto;"><table><thead><tr><th>#</th><th>Title</th><th>Amount</th><th>Category</th><th>Date</th></tr></thead><tbody>';
+					for (var i = 0; i < expenses.length; i++) {
+						var e = expenses[i];
+						html += '<tr><td>' + (i + 1) + '</td><td style="font-weight:600;">' + e.title + '</td><td style="color:#e71d36;font-weight:700;">&#x20B9; ' + parseFloat(e.amount).toLocaleString('en-IN', {minimumFractionDigits: 2}) + '</td><td><span class="badge">' + e.category + '</span></td><td>' + e.expenseDate + '</td></tr>';
+					}
+					html += '</tbody></table></div>';
+					container.innerHTML = html;
+				});
+		}
 
-function toggleReport() {
-    var t = document.getElementById('rt').value;
-    document.getElementById('mf').style.display = t === 'monthly' ? 'block' : 'none';
-    document.getElementById('yf').style.display = t === 'monthly' ? 'block' : 'none';
-    document.getElementById('cf').style.display = t === 'category' ? 'block' : 'none';
-}
+		function toggleReport() {
+			var t = document.getElementById('rt').value;
+			document.getElementById('mf').style.display = t === 'monthly' ? 'block' : 'none';
+			document.getElementById('yf').style.display = t === 'monthly' ? 'block' : 'none';
+			document.getElementById('cf').style.display = t === 'category' ? 'block' : 'none';
+		}
 
-function showAlert(msg, type) {
-    var container = document.getElementById('alertContainer');
-    container.innerHTML = '<div class="alert alert-' + type + '"><span>' + (type === 'success' ? '&#x2714;' : '&#x26A0;') + ' ' + msg + '</span><button class="close" onclick="this.parentElement.style.display=\'none\'">&times;</button></div>';
-    setTimeout(function() { container.innerHTML = ''; }, 5000);
-}
-</script>
+		function showAlert(msg, type) {
+			var container = document.getElementById('alertContainer');
+			container.innerHTML = '<div class="alert alert-' + type + '"><span>' + (type === 'success' ? '&#x2714;' : '&#x26A0;') + ' ' + msg + '</span><button class="close" onclick="this.parentElement.style.display=\'none\'">&times;</button></div>';
+			setTimeout(function () {container.innerHTML = '';}, 5000);
+		}
+	</script>
 </body>
+
 </html>

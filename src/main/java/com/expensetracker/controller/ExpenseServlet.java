@@ -8,8 +8,8 @@ import java.util.Map;
 
 import com.expensetracker.model.Expense;
 import com.expensetracker.model.User;
+import com.expensetracker.dto.ExpenseDTO;
 import com.expensetracker.service.ExpenseService;
-import com.expensetracker.service.ExpenseService.ReportData;
 import com.expensetracker.util.GsonProvider;
 import com.google.gson.Gson;
 
@@ -263,13 +263,17 @@ public class ExpenseServlet extends HttpServlet {
         String yearStr = request.getParameter("year");
 
         // Generate report using service layer
-        ReportData reportData = expenseService.generateReport(userId, reportType, category, monthStr, yearStr);
+        List<ExpenseDTO> reportExpenses = expenseService.getReportExpenses(userId, reportType, category, monthStr, yearStr);
+        
+        double reportTotal = reportExpenses.stream().mapToDouble(ExpenseDTO::getAmount).sum();
+        double reportHighest = reportExpenses.stream().mapToDouble(ExpenseDTO::getAmount).max().orElse(0);
+        double reportLowest = reportExpenses.stream().mapToDouble(ExpenseDTO::getAmount).min().orElse(0);
 
         result.put("success", true);
-        result.put("reportExpenses", reportData.getExpenses());
-        result.put("reportTotal", reportData.getTotalAmount());
-        result.put("reportHighest", reportData.getHighestAmount());
-        result.put("reportLowest", reportData.getLowestAmount());
+        result.put("reportExpenses", reportExpenses);
+        result.put("reportTotal", reportTotal);
+        result.put("reportHighest", reportHighest);
+        result.put("reportLowest", reportLowest);
         response.getWriter().write(gson.toJson(result));
     }
 }
